@@ -43,9 +43,22 @@ app.get('/', (req, res) => {
             throw error2;
           }
           var correlationId = generateUuid();
-          var num = 'LEASING';
+          let queryStringArray = [];
 
-          console.log(' [x] Requesting backend info', num);
+          let params = req.query;
+
+          if (params.minRate)
+            queryStringArray.push(`minRate: ${parseInt(params.minRate)}`);
+          if (params.maxRate)
+            queryStringArray.push(`maxRate: ${parseInt(params.maxRate)}`);
+          if (params.make) queryStringArray.push(`make: "${params.make}"`);
+          if (params.carType)
+            queryStringArray.push(`carType: "${params.carType}"`);
+
+          let query =
+            queryStringArray.length > 0 ? queryStringArray.join(',') : '';
+
+          console.log(' [x] Requesting backend info', query);
 
           channel.consume(
             q.queue,
@@ -64,7 +77,7 @@ app.get('/', (req, res) => {
             }
           );
 
-          channel.sendToQueue(QUEUE, Buffer.from(num.toString()), {
+          channel.sendToQueue(QUEUE, Buffer.from(query), {
             correlationId: correlationId,
             replyTo: q.queue,
           });
