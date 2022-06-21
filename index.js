@@ -54,9 +54,14 @@ app.get('/', (req, res) => {
           if (params.make) queryStringArray.push(`make: "${params.make}"`);
           if (params.carType)
             queryStringArray.push(`carType: "${params.carType}"`);
+          if (params.order) queryStringArray.push(`order: "${params.order}"`);
+          if (params.fzg_id)
+            queryStringArray.push(`fzg_id: "${params.fzg_id}"`);
 
           let query =
             queryStringArray.length > 0 ? queryStringArray.join(',') : '';
+
+          if (params.showTypes) query = `${query} [[${params.showTypes}]]`;
 
           console.log(' [x] Requesting backend info', query);
 
